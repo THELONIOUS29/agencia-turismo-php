@@ -1,0 +1,1714 @@
+<?php
+require_once __DIR__ . '/../Config/session.php';
+agencia_session_start(); // Inicia la sesiÃ³n
+include("../Config/conexion.php");
+
+
+if (isset($_SESSION['usuario'])) {
+    $usuario = $_SESSION['usuario'];
+  
+    
+
+    $stmt = $conn->prepare("SELECT usuario, rol, fotoU FROM usuarios WHERE usuario = ?");
+    $stmt->bind_param("s", $usuario);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+
+    if ($resultado && $resultado->num_rows > 0) {
+        $datosUsuario = $resultado->fetch_assoc();
+
+        $_SESSION['usuario'] = isset($datosUsuario['usuario']) ? $datosUsuario['usuario'] : '';
+        $_SESSION['rol'] = isset($datosUsuario['rol']) ? $datosUsuario['rol'] : '';
+        $_SESSION['foto'] = isset($datosUsuario['fotoU']) ? 'data:image/jpeg;base64,' . base64_encode($datosUsuario['fotoU']) : BASE_URL . 'imagenes/default-profile.png';
+    } else {
+        echo 'No se encontrÃ³ el usuario en la base de datos.';
+    }
+    $stmt->close(); // Cierra el statement
+} else {
+    echo 'No hay sesiÃ³n activa.';
+}
+
+$rol = isset($_SESSION['rol']) ? $_SESSION['rol'] : '';$rol = isset($_SESSION['rol']) ? $_SESSION['rol'] : '';
+
+/*
+// Imprime el contenido de la sesiÃ³n
+echo '<pre>';
+print_r($_SESSION);
+echo '</pre>';
+*/
+
+
+
+
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EXPLORA ECUADOR CON NOSOTROS</title>
+  <link rel="shortcut icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+  
+</head>
+
+<body id="top">
+
+  <!--HEADER-->
+
+  <header class="header" data-header>
+    <div class="overlay" data-overlay></div>
+
+    <div class="header-top">
+      <div class="container">
+        <a href="tel:+01123456790" class="helpline-box">
+          <div class="icon-box">
+            <ion-icon name="call-outline"></ion-icon>
+          </div>
+          <div class="wrapper">
+            <p class="helpline-title">Para mÃ¡s consultas::</p>
+
+            <p class="helpline-number">TELEFONO_DE_EJEMPLO</p>
+          </div>
+        </a>
+
+        <a href="#" class="logo">
+          <img src="../Imagenes/logo2.png" alt="Tourly logo">
+        </a>
+
+        <div class="header-btn-group">
+        <a href="#" class="btn btn-primary profile-btn" aria-label="Profile Menu">
+            <img src="<?php echo isset($_SESSION['foto']) ? $_SESSION['foto'] : 'default-profile.png'; ?>" alt="Perfil" class="profile-img">
+        </a>
+
+        <div class="profile-menu" id="profileMenu">
+            <ul>
+                
+                <?php if ($rol == 'admin'): ?>
+                    <li><a href="../Controlador/Controlador.php?campo=1">Modo Admin</a></li>
+                <?php endif; ?>
+                <li><a href="../Controlador/controlador.php?campo=17">Reservas</a></li>
+                <?php if ($rol == 'usuario'): ?>
+                  <li><a href="../Controlador/Controlador.php?campo=18">Perfil</a></li>
+                <?php endif; ?>
+                
+                <li><a href="../index.php">Salir</a></li>
+            </ul>
+        </div>
+
+
+          <button class="nav-open-btn" aria-label="Open Menu" data-nav-open-btn>
+            <ion-icon name="menu-outline"></ion-icon>
+          </button>
+
+        </div>  
+
+      </div>
+    </div>
+
+    <div class="header-bottom">
+      <div class="container">
+        <ul class="social-list">
+          <li>
+            <a href="#" class="social-link">
+              <ion-icon name="logo-facebook"></ion-icon>
+            </a>
+          </li>
+
+          <li>
+            <a href="#" class="social-link">
+              <ion-icon name="logo-twitter"></ion-icon>
+            </a>
+          </li>
+
+          <li>
+            <a href="#" class="social-link">
+              <ion-icon name="logo-youtube"></ion-icon>
+            </a>
+          </li>
+        </ul>
+
+        <nav class="navbar" data-navbar>
+          <div class="navbar-top">
+            <a href="#" class="logo">
+              <img src="../Imagenes/logo2.png" alt="Tourly logo">
+            </a>
+            <button class="nav-close-btn" aria-label="Close Menu" data-nav-close-btn>
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+          </div>
+
+          <ul class="navbar-list">
+          <ul class="navbar-list">
+          <li>
+              <a href="../Controlador/controlador.php?campo=12" class="navbar-link" data-nav-link>Inicio</a>
+            </li>
+
+            <li>
+              <a href="../Controlador/controlador.php?campo=13" class="navbar-link" data-nav-link>Nosotros</a>
+            </li>
+            <li>
+              <a href="../Controlador/controlador.php?campo=14" class="navbar-link" data-nav-link>Destinos</a>
+            </li>
+
+            <li>
+              <a href="../Controlador/controlador.php?campo=15" class="navbar-link" data-nav-link>Blog</a>
+            </li>
+
+            <li>
+              <a href="../Controlador/controlador.php?campo=16" class="navbar-link" data-nav-link>Paquetes</a>
+            </li>
+
+            <li>
+              <a href="../Controlador/controlador.php?campo=17" class="navbar-link" data-nav-link>Reservaciones</a>
+            </li>
+          </ul>
+        </nav>
+        <a class="btn btn-ayuda" href="https://viperlan.github.io/EcuadorAndeanTrails.github.io/ayuda%20P3/">
+          <span class="material-symbols-outlined">live_help</span>
+          <span class="btn-ayuda-text">Ayuda</span>
+        </a>
+        
+
+      </div>
+    </div>
+
+  </header>
+
+
+  <main>
+    <article>
+
+      <!--INICIO P-->
+      <section class="profile-edit">
+    <h1>Perfil de Usuario</h1>
+
+    <!-- Incluye el perfil PHP aquÃ­ -->
+    <?php include("../Model/PerfilMos.php"); ?>
+
+    <div class="profile-container">
+        <div class="profile-image">
+            <?php if (!empty($fotoU)) { ?>
+                <img src="<?php echo $fotoU; ?>" alt="Foto de <?php echo htmlspecialchars($nombre . ' ' . $apellido); ?>">
+            <?php } else { ?>
+                <img src="../img/default_profile_image.jpg" alt="Foto de <?php echo htmlspecialchars($nombre . ' ' . $apellido); ?>">
+            <?php } ?>
+        </div>
+        <div class="profile-details">
+            <form action="../Model/EditarP_U.php" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+                <div class="form-group">
+                    <label class="form-label" for="nombre">Nombre</label>
+                    <input class="form-input" type="text" id="nombre" name="nombre" value="<?php echo htmlspecialchars($nombre); ?>" required>
+                    <div class="form-message" id="nombre-message"></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="apellido">Apellido</label>
+                    <input class="form-input" type="text" id="apellido" name="apellido" value="<?php echo htmlspecialchars($apellido); ?>" required>
+                    <div class="form-message" id="apellido-message"></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="correo">Correo</label>
+                    <input class="form-input" type="email" id="correo" name="correo" value="<?php echo htmlspecialchars($correo); ?>" required>
+                    <div class="form-message" id="correo-message"></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="direccion">DirecciÃ³n</label>
+                    <input class="form-input" type="text" id="direccion" name="direccion" value="<?php echo htmlspecialchars($direccion); ?>" required>
+                    <div class="form-message" id="direccion-message"></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="telefono">TelÃ©fono</label>
+                    <input class="form-input" type="tel" id="telefono" name="telefono" value="<?php echo htmlspecialchars($telefono); ?>" required>
+                    <div class="form-message" id="telefono-message"></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="cedula">CÃ©dula</label>
+                    <input class="form-input" type="text" id="cedula" name="cedula" value="<?php echo htmlspecialchars($cedula); ?>" required>
+                    <div class="form-message" id="cedula-message"></div>
+                </div>
+                <div class="form-group photo-upload">
+                    <label class="form-label" for="fotoU">Foto de Perfil</label>
+                    <input class="form-input" type="file" id="fotoU" name="fotoU">
+                </div>
+
+                <div class="form-message" id="form-message">
+                    <?php
+                    // Mostrar el mensaje de confirmaciÃ³n o error
+                    if (isset($_GET['message'])) {
+                        echo '<p class="mensaje">' . htmlspecialchars($_GET['message']) . '</p>';
+                    }
+                    ?>
+                </div>
+
+                <div class="form-submit">
+                    <button type="submit" class="btn-save">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+      
+
+
+  <!--FOOTER-->
+
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="container">
+        <div class="footer-brand">
+          <a href="#" class="logo">
+            <img src="../Imagenes/logo2.png" alt="Tourly logo">
+          </a>
+          <p class="footer-text">
+            Cada viaje a Ecuador es una oportunidad para sumergirse en una cultura rica y diversa, descubrir tradiciones ancestrales y saborear una gastronomÃ­a Ãºnica.
+          </p>
+        </div>
+
+        <div class="footer-contact">
+          <h4 class="contact-title">ContÃ¡ctenos</h4>
+          <p class="contact-text">
+            Â¡No dudes en contactarnos y comienza tu aventura hoy mismo!
+          </p>
+
+          <ul>
+            <li class="contact-item">
+              <ion-icon name="call-outline"></ion-icon>
+
+              <a href="tel:+01123456790" class="contact-link">TELEFONO_DE_EJEMPLO</a>
+            </li>
+
+            <li class="contact-item">
+              <ion-icon name="mail-outline"></ion-icon>
+
+              <a href="mailto:info.tourly.com" class="contact-link">info.viajesito@espectacular.com</a>
+            </li>
+
+
+          </ul>
+        </div>
+
+        <div class="footer-form">
+          <p class="form-text">
+            Â¡SuscrÃ­bete a nuestro boletÃ­n para recibir las Ãºltimas actualizaciones y novedades directamente en tu bandeja de entrada!
+          </p>
+
+          <form action="" class="form-wrapper">
+            <input type="email" name="email" class="input-field" placeholder="Introduce tu correo electrÃ³nico" required>
+
+            <button type="submit" class="btn btn-secondary">Suscribirse</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container">
+        <p class="copyright">
+          &copy; 2024 <a href="">Grupo </a>. Todos los derechos reservados
+        </p>
+
+        <ul class="footer-bottom-list">
+          <li>
+            <a href="#" class="footer-bottom-link">
+                PolÃ­tica de Privacidad</a>
+          </li>
+
+          <li>
+            <a href="#" class="footer-bottom-link">Terminos & Condiciones</a>
+          </li>
+
+          <li>
+            <a href="#" class="footer-bottom-link">FAQ</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <a href="#top" class="go-top" data-go-top>
+    <ion-icon name="chevron-up-outline"></ion-icon>
+  </a>
+
+
+
+</body>
+
+</html>
+<script>
+function validateForm() {
+    const nombre = document.getElementById('nombre').value;
+    const apellido = document.getElementById('apellido').value;
+    const correo = document.getElementById('correo').value;
+    const direccion = document.getElementById('direccion').value;
+    const telefono = document.getElementById('telefono').value;
+    const cedula = document.getElementById('cedula').value;
+
+    let valid = true;
+
+    // Limpiar mensajes anteriores
+    document.getElementById('nombre-message').innerHTML = '';
+    document.getElementById('apellido-message').innerHTML = '';
+    document.getElementById('correo-message').innerHTML = '';
+    document.getElementById('direccion-message').innerHTML = '';
+    document.getElementById('telefono-message').innerHTML = '';
+    document.getElementById('cedula-message').innerHTML = '';
+    document.getElementById('form-message').innerHTML = '';
+
+    // Validar nombre (solo letras)
+    if (!/^[A-Za-z\s]+$/.test(nombre)) {
+        document.getElementById('nombre-message').innerHTML = 'El nombre solo debe contener letras.';
+        valid = false;
+    }
+
+    // Validar apellido (solo letras)
+    if (!/^[A-Za-z\s]+$/.test(apellido)) {
+        document.getElementById('apellido-message').innerHTML = 'El apellido solo debe contener letras.';
+        valid = false;
+    }
+
+    // Validar correo (formato correcto)
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(correo)) {
+        document.getElementById('correo-message').innerHTML = 'El correo electrÃ³nico no es vÃ¡lido.';
+        valid = false;
+    }
+
+    // Validar direcciÃ³n (no debe estar vacÃ­a)
+    if (direccion.trim() === "") {
+        document.getElementById('direccion-message').innerHTML = 'La direcciÃ³n no puede estar vacÃ­a.';
+        valid = false;
+    }
+
+    // Validar telÃ©fono (10 dÃ­gitos, comienza con 09 para Ecuador)
+    const phonePattern = /^09\d{8}$/;
+    if (!phonePattern.test(telefono)) {
+        document.getElementById('telefono-message').innerHTML = 'El telÃ©fono debe tener 10 dÃ­gitos y comenzar con 09.';
+        valid = false;
+    }
+
+    // Validar cÃ©dula (Ecuadoriana)
+    if (!isValidCI(cedula)) {
+        document.getElementById('cedula-message').innerHTML = 'La cÃ©dula ingresada no es vÃ¡lida.';
+        valid = false;
+    }
+
+    return valid;
+}
+
+function isValidCI(ci) {
+    let isNumeric = true;
+    let total = 0; 
+    let individual;	
+
+    for (let position = 0; position < 10; position++) {
+        individual = ci.toString().substring(position, position + 1);
+
+        if (isNaN(individual)) {
+            isNumeric = false;				
+            break;			
+        } else {
+            if (position < 9) {
+                if (position % 2 === 0) {
+                    if (parseInt(individual) * 2 > 9) {
+                        total += 1 + ((parseInt(individual) * 2) % 10);
+                    } else {
+                        total += parseInt(individual) * 2;
+                    }
+                } else {
+                    total += parseInt(individual);		    		
+                }
+            } 
+        }
+    }
+
+    if ((total % 10) !== 0) {
+        total = (total - (total % 10) + 10) - total;		
+    } else {
+        total = 0; 	
+    }
+
+    if (isNumeric) {	
+        if (ci.toString().length !== 10) { 
+            return false; 
+        }
+
+        if (parseInt(ci, 10) === 0) { 
+            return false;
+        }
+
+        if (total !== parseInt(individual)) { 
+            return false;
+        } 
+
+        return true;			
+    }
+
+    return false;
+}
+</script>
+
+
+<style>
+  
+:root {
+
+--color-primary: #6C9BCF;
+--color-danger: #FF0060;
+--color-success: #1B9C85;
+--color-ig:#2c4d2a;;
+--color-warning: #F7D060;
+--color-white: #fff;
+--color-info-dark: #7d8da1;
+--color-dark: #363949;
+--color-light: rgba(132, 139, 200, 0.18);
+--color-dark-variant: #677483;
+--color-background: #f6f6f9;
+
+--card-border-radius: 2rem;
+--border-radius-1: 0.4rem;
+--border-radius-2: 1.2rem;
+
+--card-padding: 1.8rem;
+--padding-1: 1.2rem;
+
+--box-shadow: 0 2rem 3rem var(--color-light);
+
+  --united-nations-blue: hsl(214, 56%, 58%);
+  --bright-navy-blue: hsl(214, 57%, 51%);
+  --spanish-gray: hsl(0, 0%, 60%);
+  --black-coral: hsl(225, 8%, 42%);
+  --oxford-blue: hsl(208, 97%, 12%);
+  --yale-blue: hsl(214, 72%, 33%);
+  --blue-ncs: hsl(197, 100%, 36%);
+  --gunmetal: hsl(206, 34%, 20%);
+  --gainsboro: hsl(0, 0%, 88%);
+  --cultured: hsl(0, 0%, 98%);
+  --white: hsl(0, 0%, 100%);
+  --black: hsl(0, 0%, 0%);
+  --onyx: hsl(0, 0%, 25%);
+  --jet: hsl(0, 0%, 20%);
+
+  --ff-poppins: "Poppins", sans-serif;
+  --ff-montserrat: "Montserrat", sans-serif;
+
+  --fs-1: calc(20px + 3.5vw);
+  --fs-2: calc(18px + 1.6vw);
+  --fs-3: calc(16px + 0.45vw);
+  --fs-4: 15px;
+  --fs-5: 14px;
+  --fs-6: 13px;
+  --fs-7: 12px;
+  --fs-8: 11px;
+
+  --fw-500: 500;
+  --fw-600: 600;
+  --fw-700: 700;
+  --fw-800: 800;
+
+  /**
+   * transition
+   */
+
+  --transition: 0.25s ease-in-out;
+
+  /**
+   * spacing
+   */
+
+  --section-padding: 60px;
+
+  /**
+   * border-radius
+   */
+
+  --radius-15: 15px;
+  --radius-25: 25px;
+
+}
+
+
+
+
+
+/*-----------------------------------*\
+ * #RESET
+\*-----------------------------------*/
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+li { list-style: none; }
+
+a { text-decoration: none; }
+
+a,
+img,
+span,
+input,
+label,
+button,
+ion-icon { display: block; }
+
+input,
+button {
+  background: none;
+  border: none;
+  font: inherit;
+}
+
+button { cursor: pointer; }
+
+input { width: 100%; }
+
+ion-icon { pointer-events: none; }
+
+html {
+  font-family: var(--ff-poppins);
+  scroll-behavior: smooth;
+}
+
+body { background: var(--white); }
+
+
+
+
+
+/*-----------------------------------*\
+ * #REUSED STYLE
+\*-----------------------------------*/
+
+main {
+  margin-top: 5%; /* Ajusta el valor segÃºn la distancia que desees */
+}
+
+.container { padding-inline: 15px; }
+
+.btn {
+  color: var(--white);
+  text-transform: uppercase;
+  font-size: var(--fs-5);
+  border-radius: 100px;
+  padding: var(--padding, 8px 18px);
+  border: var(--border-width, 2px) solid transparent;
+  transition: var(--transition);
+}
+
+.btn-ayuda {
+  display: flex;
+  flex-direction: column; 
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 40px; 
+  height: 60px; 
+  color: var(--color-white);
+}
+
+
+
+ .btn-ayuda:hover,
+.btn-ayuda:focus {
+  transform: scale(1.1); 
+  color: #4da848; 
+}
+
+.btn-ayuda:hover .btn-ayuda-text,
+.btn-ayuda:focus .btn-ayuda-text {
+  font-size: 16px; 
+  color: #4da848; 
+}
+
+.btn-ayuda span.material-symbols-outlined {
+  font-size: 27px; 
+  margin: 0;
+}
+
+
+.btn-ayuda-text {
+  font-size: 14px; 
+  margin-top: 5px; 
+  color: var(--color-white); 
+}
+
+
+.btn-primary {
+  background: #33772f;
+  border-color: #33772f;
+}
+
+.btn-primary:is(:hover, :focus) {
+  background: #4da848;
+  border-color: #4da848;
+}
+
+.btn-secondary { border-color: var(--white); }
+
+.btn-secondary:is(:hover, :focus) { background: hsla(0, 0%, 100%, 0.1); }
+
+.h1,
+.h2,
+.h3 {
+  font-weight: var(--fw-800);
+  font-family: var(--ff-montserrat);
+  text-transform: uppercase;
+}
+
+.h1 {
+  color: var(--white);
+  font-size: var(--fs-1);
+}
+
+.h2,
+.h3 { color: var(--gunmetal); }
+
+.h2 { font-size: var(--fs-2); }
+
+.h3 {
+  font-size: var(--fs-3);
+  font-weight: var(--fw-700);
+}
+
+.section-subtitle {
+  color: black;
+  font-size: 15px;
+  text-transform: uppercase;
+  font-family: var(--ff-montserrat);
+  margin-bottom: 8px;
+}
+
+.section-title { margin-bottom: 15px; }
+
+.section-text {
+  color: var(--black-coral);
+  margin-bottom: 30px;
+}
+
+.card-text {
+  color: var(--black-coral);
+  font-size: var(--fs-5);
+}
+
+
+
+
+
+/*-----------------------------------*\
+ * #HEADER
+\*-----------------------------------*/
+
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding-top: 61px;
+  z-index: 4;
+ 
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('../Imagenes/bg3.jpg');
+  background-size: cover;
+  background-position: top center;
+  background-repeat: no-repeat;
+  filter: brightness(80%);
+  z-index: -1; 
+}
+
+
+
+
+
+.header-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  transition: var(--transition);
+  border-bottom: 1px solid hsla(0, 0%, 100%, 0.1);
+  padding-block: 15px;
+  z-index: 1;
+}
+
+.header.active .header-top {
+  position: fixed;
+  background: var(--gunmetal);
+}
+
+.header-top .container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  justify-items: flex-start;
+  align-items: center;
+}
+
+.helpline-box .wrapper { display: none; }
+
+.helpline-box .icon-box {
+  background: #33772f;
+  padding: 6px;
+  border-radius: 50%;
+  color: var(--white);
+}
+
+.helpline-box .icon-box ion-icon { --ionicon-stroke-width: 40px; }
+
+.header-top .logo { margin-inline: auto; 
+  
+}
+
+.header-top .logo img {  
+  width: 165px;
+  margin: auto;
+  
+}
+
+
+.header-btn-group {
+  justify-self: flex-end;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--white);
+}
+
+
+/*/////////////////////////////////*/
+/*///////////  PERFIL    //////////*/
+/*/////////////////////////////////*/
+
+.header-btn-group {
+  display: flex;
+  align-items: center;
+  position: relative; 
+}
+
+.header-btn-group .btn {
+  display: inline-flex; 
+  padding: 0; 
+}
+
+.header-btn-group .btn img.profile-img {
+  width: 50px; 
+  height: 50px; 
+  border-radius: 50%; 
+  object-fit: cover; 
+}
+
+.profile-menu {
+  display: none; 
+  position: absolute;
+  top: 110%; 
+  left: 2px; 
+  background: #2c4d2a; 
+  border: 1px solid #1d3b1e; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
+  border-radius: 8px;
+  z-index: 5; 
+  overflow: hidden; 
+  width: 8rem;
+  padding: 0% 2%;
+}
+
+.profile-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.profile-menu ul li {
+  border-bottom: 1px solid #1d3b1e; 
+}
+
+.profile-menu ul li:last-child {
+  border-bottom: none; 
+}
+
+.profile-menu ul li a {
+  display: block;
+  padding: 8px 18px;
+  color: #ffffff; 
+  text-decoration: none; 
+  font-size: 15px; 
+  transition: background 0.3s; 
+}
+
+.profile-menu ul li a:hover {
+  background: #1d3b1e; 
+}
+
+
+
+
+/*////////////////////////////////////*/
+/*/////////// FIN PERFIL    //////////*/
+/*////////////////////////////////////*/
+
+
+
+
+
+.search-btn,
+.nav-open-btn {
+  font-size: 30px;
+  color: inherit;
+}
+
+.search-btn { font-size: 20px; }
+
+.header-bottom { border-bottom: 1px solid hsla(0, 0%, 100%, 0.1); }
+
+.header-bottom .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-block: 15px;
+}
+
+.social-list {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.social-link {
+  color: var(--white);
+  padding: 8px;
+  border: 1px solid hsla(0, 0%, 100%, 0.3);
+  border-radius: 50%;
+  font-size: 15px;
+  transition: var(--transition);
+}
+
+.social-link:is(:hover, :focus) { background: hsla(0, 0%, 100%, 0.2); }
+
+.header .btn { --padding: 4px 20px; }
+
+.header .navbar {
+  position: fixed;
+  top: 0;
+  right: -300px;
+  width: 100%;
+  max-width: 300px;
+  height: 100%;
+  background: var(--white);
+  visibility: hidden;
+  pointer-events: none;
+  transition: 0.15s ease-in;
+  z-index: 3;
+}
+
+.navbar.active {
+  right: 0;
+  visibility: visible;
+  pointer-events: all;
+  transition: 0.25s ease-out;
+}
+
+.navbar-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px 15px;
+}
+
+.navbar-top .logo img { width: 150px; }
+
+.nav-close-btn {
+  font-size: 20px;
+  color: var(--bright-navy-blue);
+}
+
+.nav-close-btn ion-icon { --ionicon-stroke-width: 80px; }
+
+.navbar-list { 
+  border-top: 1px solid hsla(0, 0%, 0%, 0.1); 
+}
+
+.navbar-list li { 
+  border-bottom: 1px solid hsla(0, 0%, 0%, 0.1); 
+}
+
+.navbar-link {
+  padding: 15px 20px;
+  color: var(--jet);
+  font-weight: var(--fw-500);
+  font-size: var(--fs-4);
+  transition: var(--transition);
+  text-transform: capitalize;
+  
+}
+
+.navbar-link:is(:hover, :focus) { 
+  font-size: 18px;
+  font-weight: 500;
+  color: #4da848;
+ }
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--black);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+  transition: var(--transition);
+}
+
+.overlay.active {
+  opacity: 0.7;
+  pointer-events: all;
+}
+
+
+/*-----------------------------------*\
+ * #PERFIL FORM
+\*-----------------------------------*/
+
+.profile-edit {
+    margin-top: 12%; 
+}
+
+/* Titulo principal */
+h1 {
+    text-align: center;
+    font-weight: 800;
+    font-size: 2rem;
+    color: var(--color-dark);
+    margin-bottom: 2rem;
+}
+
+/* Contenedor del perfil */
+.profile-container {
+    background-color: var(--color-white);
+    padding: 2rem;
+    border-radius: var(--border-radius-2);
+    margin: 2rem auto;
+    width: 90%;
+    max-width: 700px;
+    text-align: center;
+    border: 1px solid var(--color-gray-light);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 8%;
+}
+
+/* Imagen de perfil */
+.profile-image {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.profile-image img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--color-primary);
+}
+
+/* Estilo para el formulario de perfil */
+.profile-container form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    width: 100%;
+}
+
+/* Ajustes para los grupos de formulario */
+.form-group {
+    margin-bottom: 15px;
+}
+
+/* Campos de texto y foto de perfil */
+.form-label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: var(--color-dark);
+}
+
+.form-input {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #6c9bcf; /* Color de borde actualizado */
+    border-radius: var(--border-radius-1);
+    font-size: 1rem;
+    text-align: center; /* Centra el texto dentro del campo */
+    box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
+}
+
+.form-input:focus {
+    border-color: var(--color-primary); /* Cambio de color en el enfoque */
+    outline: none; /* Elimina el borde de enfoque predeterminado */
+}
+
+/* Estilo para el mensaje */
+.form-message {
+    grid-column: span 2; /* Hace que el mensaje ocupe ambas columnas */
+    text-align: center; /* Centra el mensaje */
+    margin-top: 20px; /* Espacio superior para separar del contenido del formulario */
+}
+
+/* Estilo para el botÃ³n de guardar */
+.form-submit {
+    grid-column: span 2; /* Hace que el botÃ³n ocupe ambas columnas */
+    text-align: center; /* Centra el botÃ³n */
+    margin-top: 20px; /* Espacio superior para separar del contenido del formulario */
+}
+
+.btn-save {
+    background: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+    padding: 10px 15px; 
+    border-radius: var(--border-radius-1);
+    cursor: pointer;
+    font-size: 0.9rem;
+    width: 30%; 
+    align-items: center;
+    margin: 0 auto;
+
+}
+
+.btn-save:hover {
+    background: #6e8daf;
+}
+
+/* Estilos Responsivos */
+@media (max-width: 768px) {
+    .profile-container form {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-image {
+        margin-bottom: 1.5rem;
+    }
+}
+
+
+
+
+
+
+/*-----------------------------------*\
+ * #FOOTER
+\*-----------------------------------*/
+
+.footer-top {
+  background: var(--gunmetal);
+  padding-block: var(--section-padding);
+  color: var(--gainsboro);
+}
+
+.footer-brand { margin-bottom: 30px; }
+
+.footer-brand img { width: 180px; }
+
+.footer-brand .logo { margin-bottom: 20px; }
+
+.footer-text {
+  font-size: var(--fs-5);
+  line-height: 1.7;
+}
+
+.footer-contact { margin-bottom: 30px; }
+
+.contact-title {
+  position: relative;
+  font-family: var(--ff-montserrat);
+  font-weight: var(--fw-500);
+  margin-bottom: 30px;
+}
+
+.contact-title::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 50px;
+  height: 2px;
+  /*background: var(--bright-navy-blue);*/
+}
+
+.contact-text {
+  font-size: var(--fs-5);
+  margin-bottom: 15px;
+  max-width: 200px;
+}
+
+.contact-item {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.contact-item ion-icon { --ionicon-stroke-width: 40px; }
+
+.contact-link,
+address {
+  font-style: normal;
+  color: var(--gainsboro);
+  font-size: var(--fs-5);
+}
+
+.contact-link:is(:hover, :focus) { color: var(--white); }
+
+.form-text {
+  font-size: var(--fs-5);
+  margin-bottom: 20px;
+}
+
+.footer-form .input-field {
+  background: var(--white);
+  font-size: var(--fs-5);
+  padding: 15px 20px;
+  border-radius: 100px;
+  margin-bottom: 10px;
+}
+
+.footer-form .btn { width: 100%; }
+
+.footer-bottom {
+  --gunmetal: hsl(205, 36%, 17%);
+  background: var(--gunmetal);
+  padding-block: 20px;
+  text-align: center;
+}
+
+.copyright {
+  color: var(--gainsboro);
+  font-size: var(--fs-5);
+  margin-bottom: 10px;
+}
+
+.copyright a {
+  color: inherit;
+  display: inline-block;
+}
+
+.copyright a:is(:hover, :focus) { color: var(--white); }
+
+.footer-bottom-list {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 21px;
+}
+
+.footer-bottom-list > li { position: relative; }
+
+.footer-bottom-list > li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  right: -10px;
+  bottom: 3px;
+  width: 1px;
+  background: hsla(0, 0%, 100%, 0.2);
+}
+
+.footer-bottom-link {
+  color: var(--gainsboro);
+  font-size: var(--fs-7);
+  transition: var(--transition);
+}
+
+.footer-bottom-link:is(:hover, :focus) { color: var(--white); }
+
+
+
+
+
+/*-----------------------------------*\
+ * #GO TO TOP
+\*-----------------------------------*/
+
+.go-top {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  width: 35px;
+  height: 35px;
+  background: var(--bright-navy-blue);
+  color: var(--white);
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px hsla(0, 0%, 0%, 0.5);
+  opacity: 0;
+  transform: translateY(10px);
+  visibility: hidden;
+  transition: var(--transition);
+}
+
+.go-top.active {
+  opacity: 0.8;
+  transform: translateY(0);
+  visibility: visible;
+}
+
+.go-top:is(:hover, :focus) { opacity: 1; }
+
+
+
+
+
+/*-----------------------------------*\
+ * #MEDIA QUERIES
+\*-----------------------------------*/
+
+/**
+ * responsive for larger than 580px screen
+ */
+
+@media (min-width: 580px) {
+
+  /**
+   * REUSED STYLE
+   */
+
+  .container {
+    max-width: 580px;
+    margin-inline: auto;
+  }
+
+  .btn {
+    --fs-5: 16px;
+    --padding: 12px 30px;
+  }
+
+  section:not(.cta) :is(.section-subtitle, .section-title, .section-text) {
+    text-align: center;
+  }
+
+  .section-text { margin-bottom: 40px; }
+
+  .card-text { --fs-5: 15px; }
+
+
+
+  /**
+   * HEADER
+   */
+
+  .header { padding-top: 83px; }
+
+  .helpline-box .icon-box { padding: 14px; }
+
+  .header-top .logo img { max-width: unset; }
+
+  .search-btn { font-size: 30px; }
+
+  .nav-open-btn { font-size: 40px; }
+
+  .header .btn {
+    --fs-5: 14px;
+    --padding: 6px 20px;
+  }
+
+
+
+  /**
+   * HERO
+   */
+
+  .hero {
+    min-height: 800px;
+    padding-top: 85px;
+  }
+
+  .hero-text { --fs-5: 15px; }
+
+  .btn-group { gap: 20px; }
+
+
+
+  /**
+   * TOUR SEARCH
+   */
+
+  .tour-search-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: flex-end;
+    gap: 15px;
+  }
+
+  .tour-search-form .input-wrapper { margin-bottom: 0; }
+
+  .tour-search-form .input-field { padding: 16px 20px; }
+
+  .tour-search .btn {
+    grid-column: span 2;
+    margin-top: 20px;
+  }
+
+
+
+  /**
+   * POPULAR
+   */
+
+  .popular-card .card-content { right: auto; }
+
+
+
+  /**
+   * FOOTER
+   */
+
+  .footer .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+
+  .footer-form { grid-column: span 2; }
+
+  .footer-bottom { text-align: left; }
+
+  .copyright { margin-bottom: 0; }
+
+  .footer-bottom-list { justify-content: flex-end; }
+
+}
+
+
+
+
+
+/**
+ * responsive for larger than 768px screen
+ */
+
+@media (min-width: 768px) {
+
+  /**
+   * CUSTOM PROPERTY
+   */
+
+  :root {
+
+    /**
+     * typography
+     */
+
+    --fs-5: 15px;
+
+  }
+
+
+
+  /**
+   * REUSED STYLE
+   */
+
+  .container { max-width: 800px; }
+
+  .section-text {
+    max-width: 60ch;
+    margin-inline: auto;
+  }
+
+
+
+  /**
+   * HEADER
+   */
+
+  .helpline-box {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .helpline-box .wrapper {
+    display: block;
+    color: var(--white);
+    font-size: var(--fs-6);
+  }
+
+  .social-list { gap: 10px; }
+
+
+
+  /**
+   * POPULAR
+   */
+
+  .popular-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 50px;
+  }
+
+  .popular-list > li:not(:last-child) { margin-bottom: 0; }
+
+  .popular-card .card-content { right: 20px; }
+
+
+
+
+
+
+  /**
+   * GALLERY
+   */
+
+  .gallery { padding-bottom: calc(var(--section-padding * 2)); }
+
+  .gallery-list {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .gallery-image { border-radius: var(--radius-25); }
+
+
+
+
+
+  /**
+   * FOOTER
+   */
+
+  .form-wrapper {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .footer-form .input-field { margin-bottom: 0; }
+
+  .footer-form .btn { width: max-content; }
+
+}
+
+
+
+
+
+/**
+ * responsive for larger than 992px screen
+ */
+
+@media (min-width: 992px) {
+
+  /**
+   * REUSED STYLE
+   */
+
+  .container { max-width: 1050px; }
+
+
+
+  /**
+   * HEADER
+   */
+
+  .header.active .header-top {
+    position: unset;
+    background: unset;
+  }
+
+  .nav-open-btn,
+  .navbar-top { display: none; }
+
+  .header-bottom { border-bottom: none; }
+
+  .header.active .header-bottom {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: var(--white);
+    color: var(--onyx);
+    box-shadow: 0 2px 5px hsla(0, 0%, 0%, 0.08);
+    transition: var(--transition);
+  }
+
+  .header-bottom .container { padding-block: 0; }
+
+  .header .navbar { all: unset; }
+
+  .navbar-list {
+    border-top: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .navbar-list li { border-bottom: none; }
+
+  .navbar-link {
+    color: var(--white);
+    --fs-4: 16px;
+    font-weight: unset;
+    text-transform: uppercase;
+    padding: 20px 15px;
+  }
+
+  .header.active .navbar-link { color: var(--onyx); }
+
+  .header.active .navbar-link:is(:hover, :focus) { color: var(--bright-navy-blue); }
+
+  .header.active .social-link {
+    color: var(--onyx);
+    border-color: hsla(0, 0%, 0%, 0.15);
+  }
+
+  .overlay { display: none; }
+
+
+
+  /**
+   * HERO
+   */
+
+  .hero .container { max-width: 740px; }
+
+
+
+  /**
+   * TOUR SEARCH
+   */
+
+  .tour-search-form { grid-template-columns: repeat(5, 1fr); }
+
+  .tour-search .btn {
+    --padding: 15px;
+    grid-column: unset;
+    margin-top: 0;
+  }
+
+
+
+  /**
+   * POPULAR
+   */
+
+  .popular-list { grid-template-columns: repeat(3, 1fr); }
+
+
+
+  /**
+   * PACKAGE
+   */
+
+  .meta-box { --fs-8: 13px; }
+
+  .meta-box > ion-icon { font-size: 15px; }
+
+
+
+
+  /**
+   * FOOTER
+   */
+
+  .footer-top .container {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 50px;
+  }
+
+  .footer-form { grid-column: unset; }
+
+  .form-wrapper { flex-direction: column; }
+
+  .footer-form .btn { width: 100%; }
+
+}
+
+
+
+
+
+/**
+ * responsive for larger than 1200px screen
+ */
+
+@media (min-width: 1200px) {
+
+  /**
+   * CUSTOM PROPERTY
+   */
+
+  :root {
+
+    /**
+     * spacing
+     */
+
+    --section-padding: 100px;
+
+  }
+
+
+
+  /**
+   * REUSED STYLE
+   */
+
+  .container { max-width: 1180px; }
+
+}
+</style>
+
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+  const profileBtn = document.querySelector('.profile-btn');
+  const profileMenu = document.getElementById('profileMenu');
+
+  profileBtn.addEventListener('click', function (event) {
+    event.preventDefault(); // Evita que el enlace realice la navegaciÃ³n
+    profileMenu.style.display = profileMenu.style.display === 'block' ? 'none' : 'block';
+  });
+
+  // Cierra el menÃº si se hace clic fuera de Ã©l
+  document.addEventListener('click', function (event) {
+    if (!profileBtn.contains(event.target) && !profileMenu.contains(event.target)) {
+      profileMenu.style.display = 'none';
+    }
+  });
+});
+
+</script>

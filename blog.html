@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Clima</title>
+</head>
+<link rel="stylesheet" href="https://pro.openweathermap.org/data/2.5/forecast/climate?lat={lat}&lon={lon}&appid={4b0151de41b7268d228ebeebd25bc2ed}">
+<body>
+
+  <div id="clima"></div>
+
+
+
+  <script>
+    const apiKey = 'CONFIGURAR_LOCALMENTE'; // Reemplaza con tu clave API
+    const ciudad = 'Buenos Aires';
+
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${ciudad}&appid=${apiKey}&units=metric`)
+      .then(response => response.json())
+      .then(data => {
+        const temperatura = data.main.temp;
+        const ciudad = data.name;
+        document.getElementById('clima').textContent = `La temperatura actual en ${ciudad} es ${temperatura}°C`;
+      });
+  </script>
+</body>
+</html>
